@@ -3,6 +3,7 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -22,6 +23,7 @@ const (
 	DefaultMaxOpenConnections    = 10
 	DefaultMaxIdleConnections    = 0
 	DefaultMaxConnectionLifetime = 600 * time.Second
+	EnvironmentVariable          = "DATABASE_URI"
 )
 
 // New will connect to the MySQL server using the given DSN
@@ -52,6 +54,16 @@ func New(dsn string, options ...Option) (*MySQL, error) {
 		dsn:  dsn,
 		opts: args,
 	}, nil
+}
+
+// NewFromEnvironment creates a new MySQL connection pool by fetching
+// the connection URI from an environment variable.
+func NewFromEnvironment(options ...Option) (*MySQL, error) {
+	envStr := os.Getenv(EnvironmentVariable)
+	if envStr == "" {
+		return nil, fmt.Errorf("environment variable %s not set", EnvironmentVariable)
+	}
+	return New(envStr, options...)
 }
 
 // Migrate to a specific version. It's assumed t
