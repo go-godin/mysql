@@ -23,7 +23,7 @@ const (
 	DefaultMaxOpenConnections    = 10
 	DefaultMaxIdleConnections    = 0
 	DefaultMaxConnectionLifetime = 600 * time.Second
-	EnvironmentVariable          = "DATABASE_URI"
+	EnvironmentVariable          = "DATABASE_ADDRESS"
 )
 
 // New will connect to the MySQL server using the given DSN
