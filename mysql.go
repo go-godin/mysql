@@ -3,12 +3,13 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
+	"github.com/golang-migrate/migrate/database/mysql"
 	"os"
 	"strings"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate"
-	"github.com/golang-migrate/migrate/database/mysql"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -24,6 +25,7 @@ const (
 	DefaultMaxIdleConnections    = 0
 	DefaultMaxConnectionLifetime = 600 * time.Second
 	EnvironmentVariable          = "DATABASE_ADDRESS"
+	DriverName                   = "mysql"
 )
 
 // New will connect to the MySQL server using the given DSN
@@ -39,7 +41,7 @@ func New(dsn string, options ...Option) (*MySQL, error) {
 		opt(args)
 	}
 
-	db, err := sqlx.Connect("mysql", dsn)
+	db, err := sqlx.Connect(DriverName, dsn)
 	if err != nil {
 		return nil, err
 	}
@@ -68,14 +70,14 @@ func NewFromEnvironment(options ...Option) (*MySQL, error) {
 
 // Migrate to a specific version. It's assumed t
 func (m MySQL) Migrate(version uint) error {
-	db, err := sql.Open("mysql", m.dsn)
+	db, err := sql.Open(DriverName, m.dsn)
 	if err != nil {
 		return err
 	}
 	driver, err := mysql.WithInstance(db, &mysql.Config{})
 	migrations, err := migrate.NewWithDatabaseInstance(
 		fmt.Sprintf("file://%s", m.opts.MigrationPath),
-		"mysql",
+		DriverName,
 		driver)
 	if err != nil {
 		return err
