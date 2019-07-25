@@ -3,13 +3,15 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
-	"github.com/golang-migrate/migrate/database/mysql"
 	"os"
 	"strings"
 	"time"
 
+	"github.com/golang-migrate/migrate/database/mysql"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate"
+	_ "github.com/golang-migrate/migrate/source/file"
 	"github.com/jmoiron/sqlx"
 )
 
